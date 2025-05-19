@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Person Manager</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: left; }
+    form { margin-bottom: 20px; }
+    input, select { margin: 5px; padding: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Person Manager</h1>
+
+  <form id="personForm">
+    <input type="hidden" name="id" id="personId">
+    <input type="text" name="name" placeholder="Name" required>
+    <input type="number" name="age" placeholder="Age" required>
+    <select name="gender">
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+    </select>
+    <input type="text" name="mobile" placeholder="Mobile" required>
+    <button type="submit">Save</button>
+  </form>
+
+  <div id="message"></div>
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Age</th><th>Gender</th><th>Mobile</th><th>Actions</th></tr>
+    </thead>
+    <tbody id="peopleTable"></tbody>
+  </table>
+
+  <script>
+    const form = document.getElementById('personForm');
+    const message = document.getElementById('message');
+    const peopleTable = document.getElementById('peopleTable');
+    const apiURL = 'http://localhost:3000/person';
+
+    //display people
+    async function loadPeople() {
+      const res = await fetch(apiURL);
+      const people = await res.json();
+      peopleTable.innerHTML = people.map(p => `
+        <tr>
+          <td>${p.name}</td>
+          <td>${p.age}</td>
+          <td>${p.gender}</td>
+          <td>${p.mobile}</td>
+          <td>
+            <button onclick='editPerson(${JSON.stringify(p)})'>Edit</button>
+            <button onclick='deletePerson("${p._id}")'>Delete</button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // CU
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      const method = data.id ? 'PUT' : 'POST';
+      const url = data.id ? `${apiURL}/${data.id}` : apiURL;
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (res.ok) {
+        form.reset();
+        document.getElementById('personId').value = '';
+        message.innerText = data.id ? 'Person updated!' : 'Person created!';
+        loadPeople();
+      } else {
+        message.innerText = 'Error saving person.';
+      }
+    });
+    // Edit
+    function editPerson(person) {
+      form.name.value = person.name;
+      form.age.value = person.age;
+      form.gender.value = person.gender;
+      form.mobile.value = person.mobile;
+      form.id.value = person._id;
+    }
+    // delete
+    async function deletePerson(id) {
+      if (confirm('Are you sure you want to delete this person?')) {
+        const res = await fetch(`${apiURL}/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+          message.innerText = 'Person deleted.';
+          loadPeople();
+        } else {
+          message.innerText = 'Error deleting person.';
+        }
+      }
+    }
+    loadPeople();
+  </script>
+</body>
+</html>
