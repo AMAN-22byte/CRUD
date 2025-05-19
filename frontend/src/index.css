@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+body {
+  font-family: Arial, sans-serif;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+input, select {
+  margin: 5px;
+  padding: 5px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 10px;
+}
+.edit{
+  background-color: green;
+color: white;
+margin:1rem;
+padding: 5px;
+border: 2px solid black;
+border-radius: 15px;
+
+}
+.delete{
+  background-color: red;
+color: white;
+padding: 5px;
+border: 2px solid black;
+border-radius: 15px;
+
+}
