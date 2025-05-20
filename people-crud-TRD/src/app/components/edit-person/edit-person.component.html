@@ -1,0 +1,13 @@
+// edit-person.component.html
+<div class="container">
+  <h2>Edit Person</h2>
+  <form (ngSubmit)="updatePerson()">
+    <label>Name:</label>
+    <input [(ngModel)]="person.name" name="name" required />
+    <br />
+    <label>Email:</label>
+    <input [(ngModel)]="person.email" name="email" required />
+    <br />
+    <button type="submit">Update</button>
+  </form>
+</div>
