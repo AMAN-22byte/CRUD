@@ -1,4 +1,3 @@
-// people-list.component.ts
 import { Component, OnInit } from '@angular/core';
 import { PersonService } from '../../services/person.service';
 import { Router } from '@angular/router';
